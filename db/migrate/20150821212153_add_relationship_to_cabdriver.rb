@@ -1,0 +1,5 @@
+class AddRelationshipToCabdriver < ActiveRecord::Migration
+  def change
+    add_column :cabdrivers, :state, :string
+  end
+end
