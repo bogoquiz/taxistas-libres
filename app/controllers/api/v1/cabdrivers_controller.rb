@@ -1,29 +1,46 @@
 class API::V1::CabdriversController < ApplicationController
   before_action :set_cabdriver, only: [:show, :update, :destroy]
+  before_action :is_geo, only: [:index]
 
   # GET /contacts
   # GET /contacts.json
   def index
     @cabdrivers = Cabdriver.all
+    #{}"4.6993083","74.1124884" ?latitude=4.664821&longitude=-74.0714571
+    @cabdrivers = Cabdriver.reverse_geocoded_by(params[:latitude],params[:longitude]) if is_geo #(params[:latitude] && params[:longitude])
+
+    if is_geo # (params[:latitude] && params[:longitude])
+
+      @cabdrivers = Geocoder.search(params[:latitude] + "," + params[:longitude])[0].formatted_address
+
+      #render json:  @locate
+
+    end
 
     # Search
     @cabdrivers = @cabdrivers.search(params[:q]) if params[:q]
 
-    # Filter for state
-    @cabdrivers = @cabdrivers.state(params[:state]) if params[:state]
+    # Filter for occupied
+    @cabdrivers = @cabdrivers.occupied(params[:occupied]) if params[:occupied]
 
     # Order by
     @cabdrivers = @cabdrivers.order(params[:order].gsub(':', ' ')) if params[:order]
 
+    #puts @locate
     
     #render :file => File.join(Rails.public_path, '404.html'), :status => 404
     if is_mobile_request?
       respond_to do |format|
-         format.json { render :json => @cabdrivers }
+         #format.json { render :json => @cabdrivers }
+         render json: @cabdrivers
       end
-    else
-         render inline: "<% @cabdrivers.each do |p| %><p><%= p.name %></p><p><%= p.cell %></p><p><%= p.state %></p><% end %>"
-
+    else 
+        if is_geo
+         render json: @cabdrivers
+        else
+         
+         render inline: "<% @cabdrivers.each do |p| %><p><%= p.name %></p><p><%= p.cell %></p><p><%= p.latitude %></p><% end %>"
+        end 
     end 
 
 
@@ -71,6 +88,19 @@ class API::V1::CabdriversController < ApplicationController
      end
 
     def cabdriver_params
-      params.require(:cabdriver).permit(:name, :cell)
+      #params.require(:cabdriver).permit(:name, :cell)
+      params.require(:cabdriver).permit(:name, 
+                                        :cell,
+                                        :occupied, 
+                                        :latitude, 
+                                        :longitude)
     end
+
+    def is_geo
+      if (params[:latitude] && params[:longitude])
+        return true
+      else
+        return false
+      end
+    end 
 end

@@ -11,14 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150821212153) do
+ActiveRecord::Schema.define(version: 20150825142831) do
 
   create_table "cabdrivers", force: :cascade do |t|
     t.string   "name"
     t.string   "cell"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "state"
+    t.boolean   "occupied"
+    t.float    "latitude"
+    t.float    "longitude"
   end
 
 end

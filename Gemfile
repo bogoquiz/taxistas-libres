@@ -20,6 +20,15 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 gem 'mobylette'
 
+gem 'geocoder'
+
+group :development, :test do
+  gem 'rspec-rails', '~> 3.0'
+  gem 'rspec-core'
+end
+
+
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
 

@@ -1,3 +1,3 @@
 class CabdriverSerializer < ActiveModel::Serializer
-  attributes :id, :name, :cell, :state
+  attributes :id, :name, :cell, :occupied, :latitude, :longitude
 end
